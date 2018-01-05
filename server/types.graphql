@@ -1,0 +1,37 @@
+# The following types define the data model of the example service
+# based on which the GraphQL API is generated
+
+type User @model {
+  id: ID! @isUnique
+  name: String!
+  username: String! @migrationValue(value: "user1")
+  password: String! 
+  posts: [Post!]! @relation(name: "UserPosts")
+}
+
+# Model Post
+type Post @model {
+  id: ID! @isUnique
+  createdAt: DateTime! # read-only (managed by Graphcool)
+  updatedAt: DateTime! # read-only (managed by Graphcool)
+  title: String!
+  content: String!
+  imageUrl: String!
+  author: User! @relation(name: "UserPosts")
+  topic: Topic @relation(name: "TopicPosts")
+  comments: [Comments!]! @relation(name: "CommentPosts")
+}
+
+#Model Topics
+type Topic @model {
+  id: ID! @isUnique
+  title: String!
+  posts: [Post!]! @relation(name: "TopicPosts")
+}
+
+type Comments @model {
+  id: ID! @isUnique
+  name: String!
+  comment: String!
+  posts: Post @relation(name: "CommentPosts")
+}
