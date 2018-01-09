@@ -79,7 +79,7 @@ class CreatePage extends React.Component {
               <select
               className='w-100 pa3 mv2'
               value={this.state.topic}
-              onChange={e => this.setState({ topic: e.target.value })}
+              onChange={e => this.setState({ topicId: e.target.value })}
             >
               <option value="">Select a Topic</option>
               <option value="cjc0o9855tqyu0153xpvw8l1v">Tecnhology</option>
@@ -100,13 +100,14 @@ class CreatePage extends React.Component {
 
   handlePost = async () => {
     const { title, content, imageUrl, topicId, authorId } = this.state;
+    console.log(title, content, imageUrl, topicId, authorId);
     await this.props.addPost({ variables: { title, content, imageUrl, topicId, authorId } })
       .then(({ data }) => {
-        console.log('got data', data);
+        if (data) window.location.pathname = '/ListPage'
       }).catch((error) => {
         console.log('there was an error sending the query', error);
       });
-    //window.location.pathname = '/ListPage'
+
   }
 }
 

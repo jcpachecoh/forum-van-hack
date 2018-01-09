@@ -62,7 +62,7 @@ class DetailPage extends React.Component {
         <div
           className='bg-white detail flex flex-column no-underline br2 h-100'
         >
-          <center><h2>{Post.title}</h2></center>
+          <center><h2>{Post.title}</h2> <h3>created by {Post.author.name}</h3></center>
           <div
             className=''
             style={{
@@ -74,9 +74,6 @@ class DetailPage extends React.Component {
           />
         </div>
         <div className='postInfo'>
-
-
-          <p><Glyphicon glyph="user" /> {Post.author.name}</p>
           <p><Glyphicon glyph="ok" /> {Post.topic.title}</p>
           <p>{Post.content}</p>
         </div>

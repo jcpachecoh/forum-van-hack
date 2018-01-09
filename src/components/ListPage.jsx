@@ -2,14 +2,19 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import Post from '../components/Post'
 import { gql, graphql, withApollo } from 'react-apollo'
+import { Table, Glyphicon } from 'react-bootstrap'
 
 class ListPage extends React.Component {
 
   constructor(props) {
     super(props);
     this.state = {
-      error: ''
+      error: '',
+      userId: localStorage.getItem('userId'),
+      filter: '',
+      filterpost: []
     }
+    this._filterData = this._filterData.bind(this);
   }
 
   componentDidMount() {
@@ -24,8 +29,20 @@ class ListPage extends React.Component {
   }
 
   _logOut = async () => {
-    localStorage.setItem('userId','');
+    localStorage.setItem('userId', '');
     this.props.history.replace('/');
+  }
+
+  _filterData(valFilter) {
+    this.setState({
+      filter: valFilter
+    });
+    let dataFiltering = this.props.data.allPosts.filter((el) => {
+      return el.title.match(this.state.filter)
+    })
+    this.setState({
+      filterpost: dataFiltering
+    })
   }
 
   render() {
@@ -39,55 +56,63 @@ class ListPage extends React.Component {
       )
     }
 
-    let blurClass = ''
-
-    if (this.props.location.pathname !== '/ListPage') {
-      blurClass = ' blur'
-    }
-
-    return (<div >
-      <div className={'w-100 flex justify-center pa6' + blurClass}>
+    return (<div className="container">
+      <div >
         <button className='pa3 bg-black-10 bn dim ttu pointer' onClick={() => this._logOut()}>Log out</button>
-        <div className='w-100 flex flex-wrap' style={{ maxWidth: 1150 }}>
-          <Link
-            to={`/create/${this.state.userId}`}
-            className='ma3 box new-post br2 flex flex-column items-center justify-center ttu fw6 f20 black-30 no-underline'
-          >
-            <img
-              src={require('../assets/plus.svg')}
-              alt=''
-              className='plus mb3'
-            />
-            <div>New Post</div>
-          </Link>
-          {this.props.data.allPosts && this.props.data.allPosts.map(post => (
-            <Post
-              key={post.id}
-              post={post}
-              refresh={() => this.props.data.refetch()}
-            />
-          ))}
+        <center><h1>FORUM VAN HACK APP</h1></center>
+        <Link
+          to={`/create/${this.state.userId}`}
+        >
+          <button className="btn btn-default" ><Glyphicon glyph="plus" /> New Post</button>
+        </Link>
+        <div className="form-group">
+          <input className="form-control" value={this.state.filter} placeholder="Search"
+            onChange={(e) => this._filterData(e.target.value)} />
         </div>
-        {this.props.children}
+        <Table striped bordered condensed hover >
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Author</th>
+              <th>Created date</th>
+            </tr>
+          </thead>
+          <tbody>
+            {this.props.data.allPosts && !this.state.filter && this.props.data.allPosts.map(post => (
+              <Post
+                key={post.id}
+                post={post}
+                refresh={() => this.props.data.refetch()}
+              />
+            ))}
+            {this.state.filterpost && this.state.filter &&  this.state.filterpost.map(post => (
+              <Post
+                key={post.id}
+                post={post}
+                refresh={() => this.props.data.refetch()}
+              />
+            ))}
+          </tbody>
+        </Table>
       </div>
-      }
     </div>
     )
   }
 }
 const FeedQuery = gql`query {
-  allPosts {
-    id
+        allPosts {
+      id
     imageUrl
+    title
     author {
-      name
-    }
-    createdAt
+        name
+      }
+      createdAt
     updatedAt
     comments {
-      id
-    }
-  }
+        id
+      }
+      }
 }`
 
 const ListPageWithData = graphql(FeedQuery, {

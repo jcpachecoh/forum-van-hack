@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { gql, graphql } from 'react-apollo'
+import { formatDate } from '../scripts'
 
 class Post extends React.Component {
 
@@ -11,23 +12,15 @@ class Post extends React.Component {
 
   render() {
     return (
-      <Link
-        className='bg-white ma3 box post flex flex-column no-underline br2'
-        to={`/Post/${this.props.post.id}`}
-      >
-        <div
-          className='image'
-          style={{
-            backgroundImage: `url(${this.props.post.imageUrl})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            paddingBottom: '100%',
-          }}
-        />
-        <div className='flex items-center black-80 fw3 description'>
-          {this.props.post.title}
-        </div>
-      </Link>
+      <tr>
+        <td><Link
+          to={`/Post/${this.props.post.id}`}
+        >{this.props.post.title}
+        </Link>
+        </td>
+        <td> {this.props.post.author.name} </td>
+        <td> {formatDate(this.props.post.createdAt)} </td>
+      </tr>
     )
   }
   //<span className='red f6 pointer dim' onClick={this.handleDelete}>Delete</span>
